@@ -1,0 +1,2696 @@
+\documentclass{report}%
+\usepackage[T1]{fontenc}%
+\usepackage[utf8]{inputenc}%
+\usepackage{lmodern}%
+\usepackage{textcomp}%
+\usepackage{lastpage}%
+\usepackage{subcaption}%
+\usepackage{tikz}%
+%
+\usepackage{tikz}%
+\usepackage{subcaption}%
+\usepackage{graphicx}%
+\usetikzlibrary{graphs,graphdrawing, quotes}%
+\usetikzlibrary{graphs.standard, arrows.meta}%
+\usegdlibrary{force}%
+\usepackage{geometry}%
+
+\geometry{
+    a4paper,
+    left=2cm,
+    right=2cm,
+    top=2cm,
+    bottom=2cm,    
+}%
+\title{Ricerca Operativa}%
+\author{luca carabini}%
+%
+\begin{document}%
+\normalsize%
+\maketitle%
+\chapter{Cycle Cancelling}%
+\label{chap:CycleCancelling}%
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"b=4"] -> [ "(2,3)" pos=0.2  ] 2[label=right:"b=0"];
+        1[label=right:"b=4"] -> [ "(5,3)" pos=0.2  ] 3[label=right:"b=0"];
+        2[label=right:"b=0"] -> [ "(1,1)" pos=0.2  ] 3[label=right:"b=0"];
+        2[label=right:"b=0"] -> [ "(5,1)" pos=0.2  ] 4[label=right:"b=0"];
+        2[label=right:"b=0"] -> [ "(7,4)" pos=0.2  ] 5[label=right:"b=0"];
+        3[label=right:"b=0"] -> [ "(2,2)" pos=0.2  ] 5[label=right:"b=0"];
+        4[label=right:"b=0"] -> [ "(5,3)" pos=0.2  ] 6[label=right:"b=-4"];
+        5[label=right:"b=0"] -> [ "(3,2)" pos=0.2  ] 4[label=right:"b=0"];
+        5[label=right:"b=0"] -> [ "(2,3)" pos=0.2  ] 6[label=right:"b=-4"];
+        
+    }; %
+\end{tikzpicture}%
+\end{subfigure}%
+\end{figure}
+
+%
+\newpage
+
+%
+\section{Flusso ammissibile}%
+\label{sec:Flussoammissibile}%
+Inizio a crecare un Flusso ammissibile
+
+%
+\subsection{Iterazione 0}%
+\label{subsec:Iterazione0}%
+Inizio a etichettare i nodi partendo dal nodo s%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(3,0)" pos=0.2  ] 2;
+        1 -> [ "(3,0)" pos=0.2  ] 3;
+        2 -> [ "(1,0)" pos=0.2  ] 3;
+        2 -> [ "(1,0)" pos=0.2  ] 4;
+        2 -> [ "(4,0)" pos=0.2  ] 5;
+        3 -> [ "(2,0)" pos=0.2  ] 5;
+        4 -> [ "(3,0)" pos=0.2  ] 6;
+        5 -> [ "(2,0)" pos=0.2  ] 4;
+        5 -> [ "(3,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,0)" pos=0.2  ] 1;
+        6 -> [ "(4,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 7}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,4"] -> [ "(3,0)" pos=0.2  ] 2;
+        1[label=right:"7,4"] -> [ "(3,0)" pos=0.2  ] 3;
+        2 -> [ "(1,0)" pos=0.2  ] 3;
+        2 -> [ "(1,0)" pos=0.2  ] 4;
+        2 -> [ "(4,0)" pos=0.2  ] 5;
+        3 -> [ "(2,0)" pos=0.2  ] 5;
+        4 -> [ "(3,0)" pos=0.2  ] 6;
+        5 -> [ "(2,0)" pos=0.2  ] 4;
+        5 -> [ "(3,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,0)" pos=0.2  ] 1[label=right:"7,4"];
+        6 -> [ "(4,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 1}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,4"] -> [ "(3,0)" pos=0.2  ] 2[label=right:"1,3"];
+        1[label=right:"7,4"] -> [ "(3,0)" pos=0.2  ] 3;
+        2[label=right:"1,3"] -> [ "(1,0)" pos=0.2  ] 3;
+        2[label=right:"1,3"] -> [ "(1,0)" pos=0.2  ] 4;
+        2[label=right:"1,3"] -> [ "(4,0)" pos=0.2  ] 5;
+        3 -> [ "(2,0)" pos=0.2  ] 5;
+        4 -> [ "(3,0)" pos=0.2  ] 6;
+        5 -> [ "(2,0)" pos=0.2  ] 4;
+        5 -> [ "(3,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,0)" pos=0.2  ] 1[label=right:"7,4"];
+        6 -> [ "(4,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 2}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,4"] -> [ "(3,0)" pos=0.2  ] 2[label=right:"1,3"];
+        1[label=right:"7,4"] -> [ "(3,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(1,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(1,0)" pos=0.2  ] 4;
+        2[label=right:"1,3"] -> [ "(4,0)" pos=0.2  ] 5;
+        3[label=right:"1,3"] -> [ "(2,0)" pos=0.2  ] 5;
+        4 -> [ "(3,0)" pos=0.2  ] 6;
+        5 -> [ "(2,0)" pos=0.2  ] 4;
+        5 -> [ "(3,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,0)" pos=0.2  ] 1[label=right:"7,4"];
+        6 -> [ "(4,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 3}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,4"] -> [ "(3,0)" pos=0.2  ] 2[label=right:"1,3"];
+        1[label=right:"7,4"] -> [ "(3,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(1,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(1,0)" pos=0.2  ] 4[label=right:"2,1"];
+        2[label=right:"1,3"] -> [ "(4,0)" pos=0.2  ] 5;
+        3[label=right:"1,3"] -> [ "(2,0)" pos=0.2  ] 5;
+        4[label=right:"2,1"] -> [ "(3,0)" pos=0.2  ] 6;
+        5 -> [ "(2,0)" pos=0.2  ] 4[label=right:"2,1"];
+        5 -> [ "(3,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,0)" pos=0.2  ] 1[label=right:"7,4"];
+        6 -> [ "(4,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 4}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,4"] -> [ "(3,0)" pos=0.2  ] 2[label=right:"1,3"];
+        1[label=right:"7,4"] -> [ "(3,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(1,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(1,0)" pos=0.2  ] 4[label=right:"2,1"];
+        2[label=right:"1,3"] -> [ "(4,0)" pos=0.2  ] 5[label=right:"2,3"];
+        3[label=right:"1,3"] -> [ "(2,0)" pos=0.2  ] 5[label=right:"2,3"];
+        4[label=right:"2,1"] -> [ "(3,0)" pos=0.2  ] 6;
+        5[label=right:"2,3"] -> [ "(2,0)" pos=0.2  ] 4[label=right:"2,1"];
+        5[label=right:"2,3"] -> [ "(3,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,0)" pos=0.2  ] 1[label=right:"7,4"];
+        6 -> [ "(4,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 5}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,4"] -> [ "(3,0)" pos=0.2  ] 2[label=right:"1,3"];
+        1[label=right:"7,4"] -> [ "(3,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(1,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(1,0)" pos=0.2  ] 4[label=right:"2,1"];
+        2[label=right:"1,3"] -> [ "(4,0)" pos=0.2  ] 5[label=right:"2,3"];
+        3[label=right:"1,3"] -> [ "(2,0)" pos=0.2  ] 5[label=right:"2,3"];
+        4[label=right:"2,1"] -> [ "(3,0)" pos=0.2  ] 6[label=right:"4,1"];
+        5[label=right:"2,3"] -> [ "(2,0)" pos=0.2  ] 4[label=right:"2,1"];
+        5[label=right:"2,3"] -> [ "(3,0)" pos=0.2  ] 6[label=right:"4,1"];
+        7[label=right:"7,1000"] -> [ "(4,0)" pos=0.2  ] 1[label=right:"7,4"];
+        6[label=right:"4,1"] -> [ "(4,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 6}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,4"] -> [ "(3,0)" pos=0.2  ] 2[label=right:"1,3"];
+        1[label=right:"7,4"] -> [ "(3,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(1,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(1,0)" pos=0.2  ] 4[label=right:"2,1"];
+        2[label=right:"1,3"] -> [ "(4,0)" pos=0.2  ] 5[label=right:"2,3"];
+        3[label=right:"1,3"] -> [ "(2,0)" pos=0.2  ] 5[label=right:"2,3"];
+        4[label=right:"2,1"] -> [ "(3,0)" pos=0.2  ] 6[label=right:"4,1"];
+        5[label=right:"2,3"] -> [ "(2,0)" pos=0.2  ] 4[label=right:"2,1"];
+        5[label=right:"2,3"] -> [ "(3,0)" pos=0.2  ] 6[label=right:"4,1"];
+        7[label=right:"7,1000"] -> [ "(4,0)" pos=0.2  ] 1[label=right:"7,4"];
+        6[label=right:"4,1"] -> [ "(4,0)" pos=0.2  ] 8[label=right:"6,1"];
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 8}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(1)" pos=0.2 ,blue ] 2;
+        1 -> [ "(0)" pos=0.2  ] 3;
+        2 -> [ "(0)" pos=0.2  ] 3;
+        2 -> [ "(1)" pos=0.2 ,blue ] 4;
+        2 -> [ "(0)" pos=0.2  ] 5;
+        3 -> [ "(0)" pos=0.2  ] 5;
+        4 -> [ "(1)" pos=0.2 ,blue ] 6;
+        5 -> [ "(0)" pos=0.2  ] 4;
+        5 -> [ "(0)" pos=0.2  ] 6;
+        7 -> [ "(1)" pos=0.2 ,blue ] 1;
+        6 -> [ "(1)" pos=0.2 ,blue ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Aumento il flusso di 1 }%
+\end{subfigure}%
+\end{figure}
+
+%
+\newpage
+
+%
+\subsection{Iterazione 1}%
+\label{subsec:Iterazione1}%
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(3,1)" pos=0.2  ] 2;
+        1 -> [ "(3,0)" pos=0.2  ] 3;
+        2 -> [ "(1,0)" pos=0.2  ] 3;
+        2 -> [ "(1,1)" pos=0.2  ] 4;
+        2 -> [ "(4,0)" pos=0.2  ] 5;
+        3 -> [ "(2,0)" pos=0.2  ] 5;
+        4 -> [ "(3,1)" pos=0.2  ] 6;
+        5 -> [ "(2,0)" pos=0.2  ] 4;
+        5 -> [ "(3,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,1)" pos=0.2  ] 1;
+        6 -> [ "(4,1)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 7}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,3"] -> [ "(3,1)" pos=0.2  ] 2;
+        1[label=right:"7,3"] -> [ "(3,0)" pos=0.2  ] 3;
+        2 -> [ "(1,0)" pos=0.2  ] 3;
+        2 -> [ "(1,1)" pos=0.2  ] 4;
+        2 -> [ "(4,0)" pos=0.2  ] 5;
+        3 -> [ "(2,0)" pos=0.2  ] 5;
+        4 -> [ "(3,1)" pos=0.2  ] 6;
+        5 -> [ "(2,0)" pos=0.2  ] 4;
+        5 -> [ "(3,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,1)" pos=0.2  ] 1[label=right:"7,3"];
+        6 -> [ "(4,1)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 1}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,3"] -> [ "(3,1)" pos=0.2  ] 2[label=right:"1,2"];
+        1[label=right:"7,3"] -> [ "(3,0)" pos=0.2  ] 3;
+        2[label=right:"1,2"] -> [ "(1,0)" pos=0.2  ] 3;
+        2[label=right:"1,2"] -> [ "(1,1)" pos=0.2  ] 4;
+        2[label=right:"1,2"] -> [ "(4,0)" pos=0.2  ] 5;
+        3 -> [ "(2,0)" pos=0.2  ] 5;
+        4 -> [ "(3,1)" pos=0.2  ] 6;
+        5 -> [ "(2,0)" pos=0.2  ] 4;
+        5 -> [ "(3,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,1)" pos=0.2  ] 1[label=right:"7,3"];
+        6 -> [ "(4,1)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 2}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,3"] -> [ "(3,1)" pos=0.2  ] 2[label=right:"1,2"];
+        1[label=right:"7,3"] -> [ "(3,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,2"] -> [ "(1,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,2"] -> [ "(1,1)" pos=0.2  ] 4;
+        2[label=right:"1,2"] -> [ "(4,0)" pos=0.2  ] 5;
+        3[label=right:"1,3"] -> [ "(2,0)" pos=0.2  ] 5;
+        4 -> [ "(3,1)" pos=0.2  ] 6;
+        5 -> [ "(2,0)" pos=0.2  ] 4;
+        5 -> [ "(3,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,1)" pos=0.2  ] 1[label=right:"7,3"];
+        6 -> [ "(4,1)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 3}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,3"] -> [ "(3,1)" pos=0.2  ] 2[label=right:"1,2"];
+        1[label=right:"7,3"] -> [ "(3,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,2"] -> [ "(1,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,2"] -> [ "(1,1)" pos=0.2  ] 4;
+        2[label=right:"1,2"] -> [ "(4,0)" pos=0.2  ] 5[label=right:"2,2"];
+        3[label=right:"1,3"] -> [ "(2,0)" pos=0.2  ] 5[label=right:"2,2"];
+        4 -> [ "(3,1)" pos=0.2  ] 6;
+        5[label=right:"2,2"] -> [ "(2,0)" pos=0.2  ] 4;
+        5[label=right:"2,2"] -> [ "(3,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,1)" pos=0.2  ] 1[label=right:"7,3"];
+        6 -> [ "(4,1)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 5}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,3"] -> [ "(3,1)" pos=0.2  ] 2[label=right:"1,2"];
+        1[label=right:"7,3"] -> [ "(3,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,2"] -> [ "(1,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,2"] -> [ "(1,1)" pos=0.2  ] 4[label=right:"5,2"];
+        2[label=right:"1,2"] -> [ "(4,0)" pos=0.2  ] 5[label=right:"2,2"];
+        3[label=right:"1,3"] -> [ "(2,0)" pos=0.2  ] 5[label=right:"2,2"];
+        4[label=right:"5,2"] -> [ "(3,1)" pos=0.2  ] 6;
+        5[label=right:"2,2"] -> [ "(2,0)" pos=0.2  ] 4[label=right:"5,2"];
+        5[label=right:"2,2"] -> [ "(3,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,1)" pos=0.2  ] 1[label=right:"7,3"];
+        6 -> [ "(4,1)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 4}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,3"] -> [ "(3,1)" pos=0.2  ] 2[label=right:"1,2"];
+        1[label=right:"7,3"] -> [ "(3,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,2"] -> [ "(1,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,2"] -> [ "(1,1)" pos=0.2  ] 4[label=right:"5,2"];
+        2[label=right:"1,2"] -> [ "(4,0)" pos=0.2  ] 5[label=right:"2,2"];
+        3[label=right:"1,3"] -> [ "(2,0)" pos=0.2  ] 5[label=right:"2,2"];
+        4[label=right:"5,2"] -> [ "(3,1)" pos=0.2  ] 6[label=right:"5,2"];
+        5[label=right:"2,2"] -> [ "(2,0)" pos=0.2  ] 4[label=right:"5,2"];
+        5[label=right:"2,2"] -> [ "(3,0)" pos=0.2  ] 6[label=right:"5,2"];
+        7[label=right:"7,1000"] -> [ "(4,1)" pos=0.2  ] 1[label=right:"7,3"];
+        6[label=right:"5,2"] -> [ "(4,1)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 6}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,3"] -> [ "(3,1)" pos=0.2  ] 2[label=right:"1,2"];
+        1[label=right:"7,3"] -> [ "(3,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,2"] -> [ "(1,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,2"] -> [ "(1,1)" pos=0.2  ] 4[label=right:"5,2"];
+        2[label=right:"1,2"] -> [ "(4,0)" pos=0.2  ] 5[label=right:"2,2"];
+        3[label=right:"1,3"] -> [ "(2,0)" pos=0.2  ] 5[label=right:"2,2"];
+        4[label=right:"5,2"] -> [ "(3,1)" pos=0.2  ] 6[label=right:"5,2"];
+        5[label=right:"2,2"] -> [ "(2,0)" pos=0.2  ] 4[label=right:"5,2"];
+        5[label=right:"2,2"] -> [ "(3,0)" pos=0.2  ] 6[label=right:"5,2"];
+        7[label=right:"7,1000"] -> [ "(4,1)" pos=0.2  ] 1[label=right:"7,3"];
+        6[label=right:"5,2"] -> [ "(4,1)" pos=0.2  ] 8[label=right:"6,2"];
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 8}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(3)" pos=0.2 ,blue ] 2;
+        1 -> [ "(0)" pos=0.2  ] 3;
+        2 -> [ "(0)" pos=0.2  ] 3;
+        2 -> [ "(1)" pos=0.2  ] 4;
+        2 -> [ "(2)" pos=0.2 ,blue ] 5;
+        3 -> [ "(0)" pos=0.2  ] 5;
+        4 -> [ "(1)" pos=0.2  ] 6;
+        5 -> [ "(0)" pos=0.2  ] 4;
+        5 -> [ "(2)" pos=0.2 ,blue ] 6;
+        7 -> [ "(3)" pos=0.2 ,blue ] 1;
+        6 -> [ "(3)" pos=0.2 ,blue ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Aumento il flusso di 2 }%
+\end{subfigure}%
+\end{figure}
+
+%
+\newpage
+
+%
+\subsection{Iterazione 2}%
+\label{subsec:Iterazione2}%
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(3,3)" pos=0.2  ] 2;
+        1 -> [ "(3,0)" pos=0.2  ] 3;
+        2 -> [ "(1,0)" pos=0.2  ] 3;
+        2 -> [ "(1,1)" pos=0.2  ] 4;
+        2 -> [ "(4,2)" pos=0.2  ] 5;
+        3 -> [ "(2,0)" pos=0.2  ] 5;
+        4 -> [ "(3,1)" pos=0.2  ] 6;
+        5 -> [ "(2,0)" pos=0.2  ] 4;
+        5 -> [ "(3,2)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,3)" pos=0.2  ] 1;
+        6 -> [ "(4,3)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 7}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,1"] -> [ "(3,3)" pos=0.2  ] 2;
+        1[label=right:"7,1"] -> [ "(3,0)" pos=0.2  ] 3;
+        2 -> [ "(1,0)" pos=0.2  ] 3;
+        2 -> [ "(1,1)" pos=0.2  ] 4;
+        2 -> [ "(4,2)" pos=0.2  ] 5;
+        3 -> [ "(2,0)" pos=0.2  ] 5;
+        4 -> [ "(3,1)" pos=0.2  ] 6;
+        5 -> [ "(2,0)" pos=0.2  ] 4;
+        5 -> [ "(3,2)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,3)" pos=0.2  ] 1[label=right:"7,1"];
+        6 -> [ "(4,3)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 1}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,1"] -> [ "(3,3)" pos=0.2  ] 2;
+        1[label=right:"7,1"] -> [ "(3,0)" pos=0.2  ] 3[label=right:"1,1"];
+        2 -> [ "(1,0)" pos=0.2  ] 3[label=right:"1,1"];
+        2 -> [ "(1,1)" pos=0.2  ] 4;
+        2 -> [ "(4,2)" pos=0.2  ] 5;
+        3[label=right:"1,1"] -> [ "(2,0)" pos=0.2  ] 5;
+        4 -> [ "(3,1)" pos=0.2  ] 6;
+        5 -> [ "(2,0)" pos=0.2  ] 4;
+        5 -> [ "(3,2)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,3)" pos=0.2  ] 1[label=right:"7,1"];
+        6 -> [ "(4,3)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 3}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,1"] -> [ "(3,3)" pos=0.2  ] 2;
+        1[label=right:"7,1"] -> [ "(3,0)" pos=0.2  ] 3[label=right:"1,1"];
+        2 -> [ "(1,0)" pos=0.2  ] 3[label=right:"1,1"];
+        2 -> [ "(1,1)" pos=0.2  ] 4;
+        2 -> [ "(4,2)" pos=0.2  ] 5[label=right:"3,1"];
+        3[label=right:"1,1"] -> [ "(2,0)" pos=0.2  ] 5[label=right:"3,1"];
+        4 -> [ "(3,1)" pos=0.2  ] 6;
+        5[label=right:"3,1"] -> [ "(2,0)" pos=0.2  ] 4;
+        5[label=right:"3,1"] -> [ "(3,2)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,3)" pos=0.2  ] 1[label=right:"7,1"];
+        6 -> [ "(4,3)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 5}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,1"] -> [ "(3,3)" pos=0.2  ] 2[label=right:"-5,1"];
+        1[label=right:"7,1"] -> [ "(3,0)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"-5,1"] -> [ "(1,0)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"-5,1"] -> [ "(1,1)" pos=0.2  ] 4;
+        2[label=right:"-5,1"] -> [ "(4,2)" pos=0.2  ] 5[label=right:"3,1"];
+        3[label=right:"1,1"] -> [ "(2,0)" pos=0.2  ] 5[label=right:"3,1"];
+        4 -> [ "(3,1)" pos=0.2  ] 6;
+        5[label=right:"3,1"] -> [ "(2,0)" pos=0.2  ] 4;
+        5[label=right:"3,1"] -> [ "(3,2)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,3)" pos=0.2  ] 1[label=right:"7,1"];
+        6 -> [ "(4,3)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 2}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,1"] -> [ "(3,3)" pos=0.2  ] 2[label=right:"-5,1"];
+        1[label=right:"7,1"] -> [ "(3,0)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"-5,1"] -> [ "(1,0)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"-5,1"] -> [ "(1,1)" pos=0.2  ] 4[label=right:"5,1"];
+        2[label=right:"-5,1"] -> [ "(4,2)" pos=0.2  ] 5[label=right:"3,1"];
+        3[label=right:"1,1"] -> [ "(2,0)" pos=0.2  ] 5[label=right:"3,1"];
+        4[label=right:"5,1"] -> [ "(3,1)" pos=0.2  ] 6;
+        5[label=right:"3,1"] -> [ "(2,0)" pos=0.2  ] 4[label=right:"5,1"];
+        5[label=right:"3,1"] -> [ "(3,2)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(4,3)" pos=0.2  ] 1[label=right:"7,1"];
+        6 -> [ "(4,3)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 4}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,1"] -> [ "(3,3)" pos=0.2  ] 2[label=right:"-5,1"];
+        1[label=right:"7,1"] -> [ "(3,0)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"-5,1"] -> [ "(1,0)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"-5,1"] -> [ "(1,1)" pos=0.2  ] 4[label=right:"5,1"];
+        2[label=right:"-5,1"] -> [ "(4,2)" pos=0.2  ] 5[label=right:"3,1"];
+        3[label=right:"1,1"] -> [ "(2,0)" pos=0.2  ] 5[label=right:"3,1"];
+        4[label=right:"5,1"] -> [ "(3,1)" pos=0.2  ] 6[label=right:"5,1"];
+        5[label=right:"3,1"] -> [ "(2,0)" pos=0.2  ] 4[label=right:"5,1"];
+        5[label=right:"3,1"] -> [ "(3,2)" pos=0.2  ] 6[label=right:"5,1"];
+        7[label=right:"7,1000"] -> [ "(4,3)" pos=0.2  ] 1[label=right:"7,1"];
+        6[label=right:"5,1"] -> [ "(4,3)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 6}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,1"] -> [ "(3,3)" pos=0.2  ] 2[label=right:"-5,1"];
+        1[label=right:"7,1"] -> [ "(3,0)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"-5,1"] -> [ "(1,0)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"-5,1"] -> [ "(1,1)" pos=0.2  ] 4[label=right:"5,1"];
+        2[label=right:"-5,1"] -> [ "(4,2)" pos=0.2  ] 5[label=right:"3,1"];
+        3[label=right:"1,1"] -> [ "(2,0)" pos=0.2  ] 5[label=right:"3,1"];
+        4[label=right:"5,1"] -> [ "(3,1)" pos=0.2  ] 6[label=right:"5,1"];
+        5[label=right:"3,1"] -> [ "(2,0)" pos=0.2  ] 4[label=right:"5,1"];
+        5[label=right:"3,1"] -> [ "(3,2)" pos=0.2  ] 6[label=right:"5,1"];
+        7[label=right:"7,1000"] -> [ "(4,3)" pos=0.2  ] 1[label=right:"7,1"];
+        6[label=right:"5,1"] -> [ "(4,3)" pos=0.2  ] 8[label=right:"6,1"];
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 8}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(3)" pos=0.2  ] 2;
+        1 -> [ "(1)" pos=0.2 ,blue ] 3;
+        2 -> [ "(0)" pos=0.2  ] 3;
+        2 -> [ "(1)" pos=0.2  ] 4;
+        2 -> [ "(2)" pos=0.2  ] 5;
+        3 -> [ "(1)" pos=0.2 ,blue ] 5;
+        4 -> [ "(1)" pos=0.2  ] 6;
+        5 -> [ "(0)" pos=0.2  ] 4;
+        5 -> [ "(3)" pos=0.2 ,blue ] 6;
+        7 -> [ "(4)" pos=0.2 ,blue ] 1;
+        6 -> [ "(4)" pos=0.2 ,blue ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Aumento il flusso di 1 }%
+\end{subfigure}%
+\end{figure}
+
+%
+\newpage
+
+%
+\subsection{Iterazione 3}%
+\label{subsec:Iterazione3}%
+
+%
+\section{Ricerca di cicli di costo negativo}%
+\label{sec:Ricercadiciclidicostonegativo}%
+Inizio la ricerca di cicli di costo negativo
+
+%
+\subsection{Iterazione 0}%
+\label{subsec:Iterazione0}%
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(3)" pos=0.2  ] 2;
+        1 -> [ "(1)" pos=0.2  ] 3;
+        2 -> [ "(1)" pos=0.2  ] 3;
+        2 -> [ "(1)" pos=0.2  ] 4;
+        2 -> [ "(1)" pos=0.2  ] 5;
+        3 -> [ "(2)" pos=0.2  ] 5;
+        4 -> [ "(1)" pos=0.2  ] 6;
+        5 -> [ "(0)" pos=0.2  ] 4;
+        5 -> [ "(3)" pos=0.2  ] 6;
+        
+    }; %
+\end{tikzpicture}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(5,2)" pos=0.2 , bend left ] 3;
+        2 -> [ "(1,1)" pos=0.2 ,blue ] 3;
+        2 -> [ "(7,2)" pos=0.2 , bend left ] 5;
+        3 -> [ "(2,1)" pos=0.2 , bend left,blue ] 5;
+        4 -> [ "(5,2)" pos=0.2 , bend left ] 6;
+        5 -> [ "(3,2)" pos=0.2  ] 4;
+        2 -> [ "(-2,3)" pos=0.2  ] 1;
+        3 -> [ "(-5,1)" pos=0.2 , bend left ] 1;
+        4 -> [ "(-5,1)" pos=0.2  ] 2;
+        5 -> [ "(-7,2)" pos=0.2 , bend left,blue ] 2;
+        5 -> [ "(-2,1)" pos=0.2 , bend left ] 3;
+        6 -> [ "(-5,1)" pos=0.2 , bend left ] 4;
+        6 -> [ "(-2,3)" pos=0.2  ] 5;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Trovato ciclo di costo negativo}%
+\end{subfigure}%
+\end{figure}
+
+%
+\newpage
+
+%
+\section{Ricerca di cicli di costo negativo}%
+\label{sec:Ricercadiciclidicostonegativo}%
+Inizio la ricerca di cicli di costo negativo
+
+%
+\subsection{Iterazione 1}%
+\label{subsec:Iterazione1}%
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(3)" pos=0.2  ] 2;
+        1 -> [ "(1)" pos=0.2  ] 3;
+        2 -> [ "(1)" pos=0.2  ] 3;
+        2 -> [ "(1)" pos=0.2  ] 4;
+        2 -> [ "(1)" pos=0.2  ] 5;
+        3 -> [ "(2)" pos=0.2  ] 5;
+        4 -> [ "(1)" pos=0.2  ] 6;
+        5 -> [ "(0)" pos=0.2  ] 4;
+        5 -> [ "(3)" pos=0.2  ] 6;
+        
+    }; %
+\end{tikzpicture}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(5,2)" pos=0.2 , bend left ] 3;
+        2 -> [ "(7,3)" pos=0.2 , bend left ] 5;
+        4 -> [ "(5,2)" pos=0.2 , bend left ] 6;
+        5 -> [ "(3,2)" pos=0.2  ] 4;
+        2 -> [ "(-2,3)" pos=0.2  ] 1;
+        3 -> [ "(-5,1)" pos=0.2 , bend left ] 1;
+        3 -> [ "(-1,1)" pos=0.2  ] 2;
+        4 -> [ "(-5,1)" pos=0.2  ] 2;
+        5 -> [ "(-7,1)" pos=0.2 , bend left ] 2;
+        5 -> [ "(-2,2)" pos=0.2  ] 3;
+        6 -> [ "(-5,1)" pos=0.2 , bend left ] 4;
+        6 -> [ "(-2,3)" pos=0.2  ] 5;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Non ci sono più cicli di costo negativo, flusso minimo trovato!}%
+\end{subfigure}%
+\end{figure}
+
+%
+\newpage
+
+%
+\chapter{Cycle Cancelling}%
+\label{chap:CycleCancelling}%
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"b=5"] -> [ "(2,5)" pos=0.2  ] 2[label=right:"b=-1"];
+        1[label=right:"b=5"] -> [ "(3,5)" pos=0.2  ] 3[label=right:"b=-1"];
+        2[label=right:"b=-1"] -> [ "(2,5)" pos=0.2  ] 3[label=right:"b=-1"];
+        2[label=right:"b=-1"] -> [ "(4,5)" pos=0.2  ] 4[label=right:"b=-1"];
+        2[label=right:"b=-1"] -> [ "(3,5)" pos=0.2  ] 5[label=right:"b=-1"];
+        3[label=right:"b=-1"] -> [ "(4,5)" pos=0.2  ] 5[label=right:"b=-1"];
+        4[label=right:"b=-1"] -> [ "(3,5)" pos=0.2  ] 6[label=right:"b=-1"];
+        5[label=right:"b=-1"] -> [ "(1,5)" pos=0.2  ] 4[label=right:"b=-1"];
+        5[label=right:"b=-1"] -> [ "(2,5)" pos=0.2  ] 6[label=right:"b=-1"];
+        
+    }; %
+\end{tikzpicture}%
+\end{subfigure}%
+\end{figure}
+
+%
+\newpage
+
+%
+\section{Flusso ammissibile}%
+\label{sec:Flussoammissibile}%
+Inizio a crecare un Flusso ammissibile
+
+%
+\subsection{Iterazione 0}%
+\label{subsec:Iterazione0}%
+Inizio a etichettare i nodi partendo dal nodo s%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(5,0)" pos=0.2  ] 2;
+        1 -> [ "(5,0)" pos=0.2  ] 3;
+        2 -> [ "(5,0)" pos=0.2  ] 3;
+        2 -> [ "(5,0)" pos=0.2  ] 4;
+        2 -> [ "(5,0)" pos=0.2  ] 5;
+        3 -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,0)" pos=0.2  ] 1;
+        2 -> [ "(1,0)" pos=0.2  ] 8;
+        3 -> [ "(1,0)" pos=0.2  ] 8;
+        4 -> [ "(1,0)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 7}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,5"] -> [ "(5,0)" pos=0.2  ] 2;
+        1[label=right:"7,5"] -> [ "(5,0)" pos=0.2  ] 3;
+        2 -> [ "(5,0)" pos=0.2  ] 3;
+        2 -> [ "(5,0)" pos=0.2  ] 4;
+        2 -> [ "(5,0)" pos=0.2  ] 5;
+        3 -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,0)" pos=0.2  ] 1[label=right:"7,5"];
+        2 -> [ "(1,0)" pos=0.2  ] 8;
+        3 -> [ "(1,0)" pos=0.2  ] 8;
+        4 -> [ "(1,0)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 1}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,5"] -> [ "(5,0)" pos=0.2  ] 2[label=right:"1,5"];
+        1[label=right:"7,5"] -> [ "(5,0)" pos=0.2  ] 3;
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 3;
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 4;
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 5;
+        3 -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,0)" pos=0.2  ] 1[label=right:"7,5"];
+        2[label=right:"1,5"] -> [ "(1,0)" pos=0.2  ] 8;
+        3 -> [ "(1,0)" pos=0.2  ] 8;
+        4 -> [ "(1,0)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 2}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,5"] -> [ "(5,0)" pos=0.2  ] 2[label=right:"1,5"];
+        1[label=right:"7,5"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,5"];
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,5"];
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 4;
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 5;
+        3[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,0)" pos=0.2  ] 1[label=right:"7,5"];
+        2[label=right:"1,5"] -> [ "(1,0)" pos=0.2  ] 8;
+        3[label=right:"1,5"] -> [ "(1,0)" pos=0.2  ] 8;
+        4 -> [ "(1,0)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 3}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,5"] -> [ "(5,0)" pos=0.2  ] 2[label=right:"1,5"];
+        1[label=right:"7,5"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,5"];
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,5"];
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,5"];
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 5;
+        3[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 5;
+        4[label=right:"2,5"] -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,5"];
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,0)" pos=0.2  ] 1[label=right:"7,5"];
+        2[label=right:"1,5"] -> [ "(1,0)" pos=0.2  ] 8;
+        3[label=right:"1,5"] -> [ "(1,0)" pos=0.2  ] 8;
+        4[label=right:"2,5"] -> [ "(1,0)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 4}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,5"] -> [ "(5,0)" pos=0.2  ] 2[label=right:"1,5"];
+        1[label=right:"7,5"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,5"];
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,5"];
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,5"];
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,5"];
+        3[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,5"];
+        4[label=right:"2,5"] -> [ "(5,0)" pos=0.2  ] 6;
+        5[label=right:"2,5"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,5"];
+        5[label=right:"2,5"] -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,0)" pos=0.2  ] 1[label=right:"7,5"];
+        2[label=right:"1,5"] -> [ "(1,0)" pos=0.2  ] 8;
+        3[label=right:"1,5"] -> [ "(1,0)" pos=0.2  ] 8;
+        4[label=right:"2,5"] -> [ "(1,0)" pos=0.2  ] 8;
+        5[label=right:"2,5"] -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 5}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,5"] -> [ "(5,0)" pos=0.2  ] 2[label=right:"1,5"];
+        1[label=right:"7,5"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,5"];
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,5"];
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,5"];
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,5"];
+        3[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,5"];
+        4[label=right:"2,5"] -> [ "(5,0)" pos=0.2  ] 6;
+        5[label=right:"2,5"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,5"];
+        5[label=right:"2,5"] -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,0)" pos=0.2  ] 1[label=right:"7,5"];
+        2[label=right:"1,5"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"2,1"];
+        3[label=right:"1,5"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"2,1"];
+        4[label=right:"2,5"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"2,1"];
+        5[label=right:"2,5"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"2,1"];
+        6 -> [ "(1,0)" pos=0.2  ] 8[label=right:"2,1"];
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 8}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,5"] -> [ "(5,0)" pos=0.2  ] 2[label=right:"1,5"];
+        1[label=right:"7,5"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,5"];
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,5"];
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,5"];
+        2[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,5"];
+        3[label=right:"1,5"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,5"];
+        4[label=right:"2,5"] -> [ "(5,0)" pos=0.2  ] 6[label=right:"4,5"];
+        5[label=right:"2,5"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,5"];
+        5[label=right:"2,5"] -> [ "(5,0)" pos=0.2  ] 6[label=right:"4,5"];
+        7[label=right:"7,1000"] -> [ "(5,0)" pos=0.2  ] 1[label=right:"7,5"];
+        2[label=right:"1,5"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"2,1"];
+        3[label=right:"1,5"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"2,1"];
+        4[label=right:"2,5"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"2,1"];
+        5[label=right:"2,5"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"2,1"];
+        6[label=right:"4,5"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"2,1"];
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 6}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(1)" pos=0.2 ,blue ] 2;
+        1 -> [ "(0)" pos=0.2  ] 3;
+        2 -> [ "(0)" pos=0.2  ] 3;
+        2 -> [ "(0)" pos=0.2  ] 4;
+        2 -> [ "(0)" pos=0.2  ] 5;
+        3 -> [ "(0)" pos=0.2  ] 5;
+        4 -> [ "(0)" pos=0.2  ] 6;
+        5 -> [ "(0)" pos=0.2  ] 4;
+        5 -> [ "(0)" pos=0.2  ] 6;
+        7 -> [ "(1)" pos=0.2 ,blue ] 1;
+        2 -> [ "(1)" pos=0.2 ,blue ] 8;
+        3 -> [ "(0)" pos=0.2  ] 8;
+        4 -> [ "(0)" pos=0.2  ] 8;
+        5 -> [ "(0)" pos=0.2  ] 8;
+        6 -> [ "(0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Aumento il flusso di 1 }%
+\end{subfigure}%
+\end{figure}
+
+%
+\newpage
+
+%
+\subsection{Iterazione 1}%
+\label{subsec:Iterazione1}%
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(5,1)" pos=0.2  ] 2;
+        1 -> [ "(5,0)" pos=0.2  ] 3;
+        2 -> [ "(5,0)" pos=0.2  ] 3;
+        2 -> [ "(5,0)" pos=0.2  ] 4;
+        2 -> [ "(5,0)" pos=0.2  ] 5;
+        3 -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,1)" pos=0.2  ] 1;
+        2 -> [ "(1,1)" pos=0.2  ] 8;
+        3 -> [ "(1,0)" pos=0.2  ] 8;
+        4 -> [ "(1,0)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 7}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,4"] -> [ "(5,1)" pos=0.2  ] 2;
+        1[label=right:"7,4"] -> [ "(5,0)" pos=0.2  ] 3;
+        2 -> [ "(5,0)" pos=0.2  ] 3;
+        2 -> [ "(5,0)" pos=0.2  ] 4;
+        2 -> [ "(5,0)" pos=0.2  ] 5;
+        3 -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,1)" pos=0.2  ] 1[label=right:"7,4"];
+        2 -> [ "(1,1)" pos=0.2  ] 8;
+        3 -> [ "(1,0)" pos=0.2  ] 8;
+        4 -> [ "(1,0)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 1}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,4"] -> [ "(5,1)" pos=0.2  ] 2[label=right:"1,4"];
+        1[label=right:"7,4"] -> [ "(5,0)" pos=0.2  ] 3;
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 3;
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 4;
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 5;
+        3 -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,1)" pos=0.2  ] 1[label=right:"7,4"];
+        2[label=right:"1,4"] -> [ "(1,1)" pos=0.2  ] 8;
+        3 -> [ "(1,0)" pos=0.2  ] 8;
+        4 -> [ "(1,0)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 2}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,4"] -> [ "(5,1)" pos=0.2  ] 2[label=right:"1,4"];
+        1[label=right:"7,4"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,4"];
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,4"];
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 4;
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 5;
+        3[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,1)" pos=0.2  ] 1[label=right:"7,4"];
+        2[label=right:"1,4"] -> [ "(1,1)" pos=0.2  ] 8;
+        3[label=right:"1,4"] -> [ "(1,0)" pos=0.2  ] 8;
+        4 -> [ "(1,0)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 3}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,4"] -> [ "(5,1)" pos=0.2  ] 2[label=right:"1,4"];
+        1[label=right:"7,4"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,4"];
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,4"];
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,4"];
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 5;
+        3[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 5;
+        4[label=right:"2,4"] -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,4"];
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,1)" pos=0.2  ] 1[label=right:"7,4"];
+        2[label=right:"1,4"] -> [ "(1,1)" pos=0.2  ] 8;
+        3[label=right:"1,4"] -> [ "(1,0)" pos=0.2  ] 8;
+        4[label=right:"2,4"] -> [ "(1,0)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 4}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,4"] -> [ "(5,1)" pos=0.2  ] 2[label=right:"1,4"];
+        1[label=right:"7,4"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,4"];
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,4"];
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,4"];
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,4"];
+        3[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,4"];
+        4[label=right:"2,4"] -> [ "(5,0)" pos=0.2  ] 6;
+        5[label=right:"2,4"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,4"];
+        5[label=right:"2,4"] -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,1)" pos=0.2  ] 1[label=right:"7,4"];
+        2[label=right:"1,4"] -> [ "(1,1)" pos=0.2  ] 8;
+        3[label=right:"1,4"] -> [ "(1,0)" pos=0.2  ] 8;
+        4[label=right:"2,4"] -> [ "(1,0)" pos=0.2  ] 8;
+        5[label=right:"2,4"] -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 5}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,4"] -> [ "(5,1)" pos=0.2  ] 2[label=right:"1,4"];
+        1[label=right:"7,4"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,4"];
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,4"];
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,4"];
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,4"];
+        3[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,4"];
+        4[label=right:"2,4"] -> [ "(5,0)" pos=0.2  ] 6;
+        5[label=right:"2,4"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,4"];
+        5[label=right:"2,4"] -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,1)" pos=0.2  ] 1[label=right:"7,4"];
+        2[label=right:"1,4"] -> [ "(1,1)" pos=0.2  ] 8[label=right:"3,1"];
+        3[label=right:"1,4"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"3,1"];
+        4[label=right:"2,4"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"3,1"];
+        5[label=right:"2,4"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"3,1"];
+        6 -> [ "(1,0)" pos=0.2  ] 8[label=right:"3,1"];
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 8}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,4"] -> [ "(5,1)" pos=0.2  ] 2[label=right:"1,4"];
+        1[label=right:"7,4"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,4"];
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,4"];
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,4"];
+        2[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,4"];
+        3[label=right:"1,4"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,4"];
+        4[label=right:"2,4"] -> [ "(5,0)" pos=0.2  ] 6[label=right:"4,4"];
+        5[label=right:"2,4"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,4"];
+        5[label=right:"2,4"] -> [ "(5,0)" pos=0.2  ] 6[label=right:"4,4"];
+        7[label=right:"7,1000"] -> [ "(5,1)" pos=0.2  ] 1[label=right:"7,4"];
+        2[label=right:"1,4"] -> [ "(1,1)" pos=0.2  ] 8[label=right:"3,1"];
+        3[label=right:"1,4"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"3,1"];
+        4[label=right:"2,4"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"3,1"];
+        5[label=right:"2,4"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"3,1"];
+        6[label=right:"4,4"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"3,1"];
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 6}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(1)" pos=0.2  ] 2;
+        1 -> [ "(1)" pos=0.2 ,blue ] 3;
+        2 -> [ "(0)" pos=0.2  ] 3;
+        2 -> [ "(0)" pos=0.2  ] 4;
+        2 -> [ "(0)" pos=0.2  ] 5;
+        3 -> [ "(0)" pos=0.2  ] 5;
+        4 -> [ "(0)" pos=0.2  ] 6;
+        5 -> [ "(0)" pos=0.2  ] 4;
+        5 -> [ "(0)" pos=0.2  ] 6;
+        7 -> [ "(2)" pos=0.2 ,blue ] 1;
+        2 -> [ "(1)" pos=0.2  ] 8;
+        3 -> [ "(1)" pos=0.2 ,blue ] 8;
+        4 -> [ "(0)" pos=0.2  ] 8;
+        5 -> [ "(0)" pos=0.2  ] 8;
+        6 -> [ "(0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Aumento il flusso di 1 }%
+\end{subfigure}%
+\end{figure}
+
+%
+\newpage
+
+%
+\subsection{Iterazione 2}%
+\label{subsec:Iterazione2}%
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(5,1)" pos=0.2  ] 2;
+        1 -> [ "(5,1)" pos=0.2  ] 3;
+        2 -> [ "(5,0)" pos=0.2  ] 3;
+        2 -> [ "(5,0)" pos=0.2  ] 4;
+        2 -> [ "(5,0)" pos=0.2  ] 5;
+        3 -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,2)" pos=0.2  ] 1;
+        2 -> [ "(1,1)" pos=0.2  ] 8;
+        3 -> [ "(1,1)" pos=0.2  ] 8;
+        4 -> [ "(1,0)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 7}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,3"] -> [ "(5,1)" pos=0.2  ] 2;
+        1[label=right:"7,3"] -> [ "(5,1)" pos=0.2  ] 3;
+        2 -> [ "(5,0)" pos=0.2  ] 3;
+        2 -> [ "(5,0)" pos=0.2  ] 4;
+        2 -> [ "(5,0)" pos=0.2  ] 5;
+        3 -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,2)" pos=0.2  ] 1[label=right:"7,3"];
+        2 -> [ "(1,1)" pos=0.2  ] 8;
+        3 -> [ "(1,1)" pos=0.2  ] 8;
+        4 -> [ "(1,0)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 1}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,3"] -> [ "(5,1)" pos=0.2  ] 2[label=right:"1,3"];
+        1[label=right:"7,3"] -> [ "(5,1)" pos=0.2  ] 3;
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 3;
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 4;
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 5;
+        3 -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,2)" pos=0.2  ] 1[label=right:"7,3"];
+        2[label=right:"1,3"] -> [ "(1,1)" pos=0.2  ] 8;
+        3 -> [ "(1,1)" pos=0.2  ] 8;
+        4 -> [ "(1,0)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 2}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,3"] -> [ "(5,1)" pos=0.2  ] 2[label=right:"1,3"];
+        1[label=right:"7,3"] -> [ "(5,1)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 4;
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 5;
+        3[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,2)" pos=0.2  ] 1[label=right:"7,3"];
+        2[label=right:"1,3"] -> [ "(1,1)" pos=0.2  ] 8;
+        3[label=right:"1,3"] -> [ "(1,1)" pos=0.2  ] 8;
+        4 -> [ "(1,0)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 3}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,3"] -> [ "(5,1)" pos=0.2  ] 2[label=right:"1,3"];
+        1[label=right:"7,3"] -> [ "(5,1)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,3"];
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 5;
+        3[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 5;
+        4[label=right:"2,3"] -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,3"];
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,2)" pos=0.2  ] 1[label=right:"7,3"];
+        2[label=right:"1,3"] -> [ "(1,1)" pos=0.2  ] 8;
+        3[label=right:"1,3"] -> [ "(1,1)" pos=0.2  ] 8;
+        4[label=right:"2,3"] -> [ "(1,0)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 4}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,3"] -> [ "(5,1)" pos=0.2  ] 2[label=right:"1,3"];
+        1[label=right:"7,3"] -> [ "(5,1)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,3"];
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,3"];
+        3[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,3"];
+        4[label=right:"2,3"] -> [ "(5,0)" pos=0.2  ] 6;
+        5[label=right:"2,3"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,3"];
+        5[label=right:"2,3"] -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,2)" pos=0.2  ] 1[label=right:"7,3"];
+        2[label=right:"1,3"] -> [ "(1,1)" pos=0.2  ] 8;
+        3[label=right:"1,3"] -> [ "(1,1)" pos=0.2  ] 8;
+        4[label=right:"2,3"] -> [ "(1,0)" pos=0.2  ] 8;
+        5[label=right:"2,3"] -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 5}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,3"] -> [ "(5,1)" pos=0.2  ] 2[label=right:"1,3"];
+        1[label=right:"7,3"] -> [ "(5,1)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,3"];
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,3"];
+        3[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,3"];
+        4[label=right:"2,3"] -> [ "(5,0)" pos=0.2  ] 6[label=right:"4,3"];
+        5[label=right:"2,3"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,3"];
+        5[label=right:"2,3"] -> [ "(5,0)" pos=0.2  ] 6[label=right:"4,3"];
+        7[label=right:"7,1000"] -> [ "(5,2)" pos=0.2  ] 1[label=right:"7,3"];
+        2[label=right:"1,3"] -> [ "(1,1)" pos=0.2  ] 8;
+        3[label=right:"1,3"] -> [ "(1,1)" pos=0.2  ] 8;
+        4[label=right:"2,3"] -> [ "(1,0)" pos=0.2  ] 8;
+        5[label=right:"2,3"] -> [ "(1,0)" pos=0.2  ] 8;
+        6[label=right:"4,3"] -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 6}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,3"] -> [ "(5,1)" pos=0.2  ] 2[label=right:"1,3"];
+        1[label=right:"7,3"] -> [ "(5,1)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,3"];
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,3"];
+        2[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,3"];
+        3[label=right:"1,3"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,3"];
+        4[label=right:"2,3"] -> [ "(5,0)" pos=0.2  ] 6[label=right:"4,3"];
+        5[label=right:"2,3"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,3"];
+        5[label=right:"2,3"] -> [ "(5,0)" pos=0.2  ] 6[label=right:"4,3"];
+        7[label=right:"7,1000"] -> [ "(5,2)" pos=0.2  ] 1[label=right:"7,3"];
+        2[label=right:"1,3"] -> [ "(1,1)" pos=0.2  ] 8[label=right:"4,1"];
+        3[label=right:"1,3"] -> [ "(1,1)" pos=0.2  ] 8[label=right:"4,1"];
+        4[label=right:"2,3"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"4,1"];
+        5[label=right:"2,3"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"4,1"];
+        6[label=right:"4,3"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"4,1"];
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 8}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(2)" pos=0.2 ,blue ] 2;
+        1 -> [ "(1)" pos=0.2  ] 3;
+        2 -> [ "(0)" pos=0.2  ] 3;
+        2 -> [ "(1)" pos=0.2 ,blue ] 4;
+        2 -> [ "(0)" pos=0.2  ] 5;
+        3 -> [ "(0)" pos=0.2  ] 5;
+        4 -> [ "(0)" pos=0.2  ] 6;
+        5 -> [ "(0)" pos=0.2  ] 4;
+        5 -> [ "(0)" pos=0.2  ] 6;
+        7 -> [ "(3)" pos=0.2 ,blue ] 1;
+        2 -> [ "(1)" pos=0.2  ] 8;
+        3 -> [ "(1)" pos=0.2  ] 8;
+        4 -> [ "(1)" pos=0.2 ,blue ] 8;
+        5 -> [ "(0)" pos=0.2  ] 8;
+        6 -> [ "(0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Aumento il flusso di 1 }%
+\end{subfigure}%
+\end{figure}
+
+%
+\newpage
+
+%
+\subsection{Iterazione 3}%
+\label{subsec:Iterazione3}%
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(5,2)" pos=0.2  ] 2;
+        1 -> [ "(5,1)" pos=0.2  ] 3;
+        2 -> [ "(5,0)" pos=0.2  ] 3;
+        2 -> [ "(5,1)" pos=0.2  ] 4;
+        2 -> [ "(5,0)" pos=0.2  ] 5;
+        3 -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,3)" pos=0.2  ] 1;
+        2 -> [ "(1,1)" pos=0.2  ] 8;
+        3 -> [ "(1,1)" pos=0.2  ] 8;
+        4 -> [ "(1,1)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 7}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,2"] -> [ "(5,2)" pos=0.2  ] 2;
+        1[label=right:"7,2"] -> [ "(5,1)" pos=0.2  ] 3;
+        2 -> [ "(5,0)" pos=0.2  ] 3;
+        2 -> [ "(5,1)" pos=0.2  ] 4;
+        2 -> [ "(5,0)" pos=0.2  ] 5;
+        3 -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,3)" pos=0.2  ] 1[label=right:"7,2"];
+        2 -> [ "(1,1)" pos=0.2  ] 8;
+        3 -> [ "(1,1)" pos=0.2  ] 8;
+        4 -> [ "(1,1)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 1}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,2"] -> [ "(5,2)" pos=0.2  ] 2[label=right:"1,2"];
+        1[label=right:"7,2"] -> [ "(5,1)" pos=0.2  ] 3;
+        2[label=right:"1,2"] -> [ "(5,0)" pos=0.2  ] 3;
+        2[label=right:"1,2"] -> [ "(5,1)" pos=0.2  ] 4;
+        2[label=right:"1,2"] -> [ "(5,0)" pos=0.2  ] 5;
+        3 -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,3)" pos=0.2  ] 1[label=right:"7,2"];
+        2[label=right:"1,2"] -> [ "(1,1)" pos=0.2  ] 8;
+        3 -> [ "(1,1)" pos=0.2  ] 8;
+        4 -> [ "(1,1)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 2}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,2"] -> [ "(5,2)" pos=0.2  ] 2[label=right:"1,2"];
+        1[label=right:"7,2"] -> [ "(5,1)" pos=0.2  ] 3[label=right:"1,2"];
+        2[label=right:"1,2"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,2"];
+        2[label=right:"1,2"] -> [ "(5,1)" pos=0.2  ] 4;
+        2[label=right:"1,2"] -> [ "(5,0)" pos=0.2  ] 5;
+        3[label=right:"1,2"] -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,3)" pos=0.2  ] 1[label=right:"7,2"];
+        2[label=right:"1,2"] -> [ "(1,1)" pos=0.2  ] 8;
+        3[label=right:"1,2"] -> [ "(1,1)" pos=0.2  ] 8;
+        4 -> [ "(1,1)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 3}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,2"] -> [ "(5,2)" pos=0.2  ] 2[label=right:"1,2"];
+        1[label=right:"7,2"] -> [ "(5,1)" pos=0.2  ] 3[label=right:"1,2"];
+        2[label=right:"1,2"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,2"];
+        2[label=right:"1,2"] -> [ "(5,1)" pos=0.2  ] 4[label=right:"2,2"];
+        2[label=right:"1,2"] -> [ "(5,0)" pos=0.2  ] 5;
+        3[label=right:"1,2"] -> [ "(5,0)" pos=0.2  ] 5;
+        4[label=right:"2,2"] -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,2"];
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,3)" pos=0.2  ] 1[label=right:"7,2"];
+        2[label=right:"1,2"] -> [ "(1,1)" pos=0.2  ] 8;
+        3[label=right:"1,2"] -> [ "(1,1)" pos=0.2  ] 8;
+        4[label=right:"2,2"] -> [ "(1,1)" pos=0.2  ] 8;
+        5 -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 4}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,2"] -> [ "(5,2)" pos=0.2  ] 2[label=right:"1,2"];
+        1[label=right:"7,2"] -> [ "(5,1)" pos=0.2  ] 3[label=right:"1,2"];
+        2[label=right:"1,2"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,2"];
+        2[label=right:"1,2"] -> [ "(5,1)" pos=0.2  ] 4[label=right:"2,2"];
+        2[label=right:"1,2"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,2"];
+        3[label=right:"1,2"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,2"];
+        4[label=right:"2,2"] -> [ "(5,0)" pos=0.2  ] 6;
+        5[label=right:"2,2"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,2"];
+        5[label=right:"2,2"] -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,3)" pos=0.2  ] 1[label=right:"7,2"];
+        2[label=right:"1,2"] -> [ "(1,1)" pos=0.2  ] 8;
+        3[label=right:"1,2"] -> [ "(1,1)" pos=0.2  ] 8;
+        4[label=right:"2,2"] -> [ "(1,1)" pos=0.2  ] 8;
+        5[label=right:"2,2"] -> [ "(1,0)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 5}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,2"] -> [ "(5,2)" pos=0.2  ] 2[label=right:"1,2"];
+        1[label=right:"7,2"] -> [ "(5,1)" pos=0.2  ] 3[label=right:"1,2"];
+        2[label=right:"1,2"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,2"];
+        2[label=right:"1,2"] -> [ "(5,1)" pos=0.2  ] 4[label=right:"2,2"];
+        2[label=right:"1,2"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,2"];
+        3[label=right:"1,2"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,2"];
+        4[label=right:"2,2"] -> [ "(5,0)" pos=0.2  ] 6[label=right:"4,2"];
+        5[label=right:"2,2"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,2"];
+        5[label=right:"2,2"] -> [ "(5,0)" pos=0.2  ] 6[label=right:"4,2"];
+        7[label=right:"7,1000"] -> [ "(5,3)" pos=0.2  ] 1[label=right:"7,2"];
+        2[label=right:"1,2"] -> [ "(1,1)" pos=0.2  ] 8;
+        3[label=right:"1,2"] -> [ "(1,1)" pos=0.2  ] 8;
+        4[label=right:"2,2"] -> [ "(1,1)" pos=0.2  ] 8;
+        5[label=right:"2,2"] -> [ "(1,0)" pos=0.2  ] 8;
+        6[label=right:"4,2"] -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 6}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,2"] -> [ "(5,2)" pos=0.2  ] 2[label=right:"1,2"];
+        1[label=right:"7,2"] -> [ "(5,1)" pos=0.2  ] 3[label=right:"1,2"];
+        2[label=right:"1,2"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,2"];
+        2[label=right:"1,2"] -> [ "(5,1)" pos=0.2  ] 4[label=right:"2,2"];
+        2[label=right:"1,2"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,2"];
+        3[label=right:"1,2"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,2"];
+        4[label=right:"2,2"] -> [ "(5,0)" pos=0.2  ] 6[label=right:"4,2"];
+        5[label=right:"2,2"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,2"];
+        5[label=right:"2,2"] -> [ "(5,0)" pos=0.2  ] 6[label=right:"4,2"];
+        7[label=right:"7,1000"] -> [ "(5,3)" pos=0.2  ] 1[label=right:"7,2"];
+        2[label=right:"1,2"] -> [ "(1,1)" pos=0.2  ] 8[label=right:"5,1"];
+        3[label=right:"1,2"] -> [ "(1,1)" pos=0.2  ] 8[label=right:"5,1"];
+        4[label=right:"2,2"] -> [ "(1,1)" pos=0.2  ] 8[label=right:"5,1"];
+        5[label=right:"2,2"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"5,1"];
+        6[label=right:"4,2"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"5,1"];
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 8}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(3)" pos=0.2 ,blue ] 2;
+        1 -> [ "(1)" pos=0.2  ] 3;
+        2 -> [ "(0)" pos=0.2  ] 3;
+        2 -> [ "(1)" pos=0.2  ] 4;
+        2 -> [ "(1)" pos=0.2 ,blue ] 5;
+        3 -> [ "(0)" pos=0.2  ] 5;
+        4 -> [ "(0)" pos=0.2  ] 6;
+        5 -> [ "(0)" pos=0.2  ] 4;
+        5 -> [ "(0)" pos=0.2  ] 6;
+        7 -> [ "(4)" pos=0.2 ,blue ] 1;
+        2 -> [ "(1)" pos=0.2  ] 8;
+        3 -> [ "(1)" pos=0.2  ] 8;
+        4 -> [ "(1)" pos=0.2  ] 8;
+        5 -> [ "(1)" pos=0.2 ,blue ] 8;
+        6 -> [ "(0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Aumento il flusso di 1 }%
+\end{subfigure}%
+\end{figure}
+
+%
+\newpage
+
+%
+\subsection{Iterazione 4}%
+\label{subsec:Iterazione4}%
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(5,3)" pos=0.2  ] 2;
+        1 -> [ "(5,1)" pos=0.2  ] 3;
+        2 -> [ "(5,0)" pos=0.2  ] 3;
+        2 -> [ "(5,1)" pos=0.2  ] 4;
+        2 -> [ "(5,1)" pos=0.2  ] 5;
+        3 -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,4)" pos=0.2  ] 1;
+        2 -> [ "(1,1)" pos=0.2  ] 8;
+        3 -> [ "(1,1)" pos=0.2  ] 8;
+        4 -> [ "(1,1)" pos=0.2  ] 8;
+        5 -> [ "(1,1)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 7}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,1"] -> [ "(5,3)" pos=0.2  ] 2;
+        1[label=right:"7,1"] -> [ "(5,1)" pos=0.2  ] 3;
+        2 -> [ "(5,0)" pos=0.2  ] 3;
+        2 -> [ "(5,1)" pos=0.2  ] 4;
+        2 -> [ "(5,1)" pos=0.2  ] 5;
+        3 -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,4)" pos=0.2  ] 1[label=right:"7,1"];
+        2 -> [ "(1,1)" pos=0.2  ] 8;
+        3 -> [ "(1,1)" pos=0.2  ] 8;
+        4 -> [ "(1,1)" pos=0.2  ] 8;
+        5 -> [ "(1,1)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 1}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,1"] -> [ "(5,3)" pos=0.2  ] 2[label=right:"1,1"];
+        1[label=right:"7,1"] -> [ "(5,1)" pos=0.2  ] 3;
+        2[label=right:"1,1"] -> [ "(5,0)" pos=0.2  ] 3;
+        2[label=right:"1,1"] -> [ "(5,1)" pos=0.2  ] 4;
+        2[label=right:"1,1"] -> [ "(5,1)" pos=0.2  ] 5;
+        3 -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,4)" pos=0.2  ] 1[label=right:"7,1"];
+        2[label=right:"1,1"] -> [ "(1,1)" pos=0.2  ] 8;
+        3 -> [ "(1,1)" pos=0.2  ] 8;
+        4 -> [ "(1,1)" pos=0.2  ] 8;
+        5 -> [ "(1,1)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 2}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,1"] -> [ "(5,3)" pos=0.2  ] 2[label=right:"1,1"];
+        1[label=right:"7,1"] -> [ "(5,1)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"1,1"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"1,1"] -> [ "(5,1)" pos=0.2  ] 4;
+        2[label=right:"1,1"] -> [ "(5,1)" pos=0.2  ] 5;
+        3[label=right:"1,1"] -> [ "(5,0)" pos=0.2  ] 5;
+        4 -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4;
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,4)" pos=0.2  ] 1[label=right:"7,1"];
+        2[label=right:"1,1"] -> [ "(1,1)" pos=0.2  ] 8;
+        3[label=right:"1,1"] -> [ "(1,1)" pos=0.2  ] 8;
+        4 -> [ "(1,1)" pos=0.2  ] 8;
+        5 -> [ "(1,1)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 3}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,1"] -> [ "(5,3)" pos=0.2  ] 2[label=right:"1,1"];
+        1[label=right:"7,1"] -> [ "(5,1)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"1,1"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"1,1"] -> [ "(5,1)" pos=0.2  ] 4[label=right:"2,1"];
+        2[label=right:"1,1"] -> [ "(5,1)" pos=0.2  ] 5;
+        3[label=right:"1,1"] -> [ "(5,0)" pos=0.2  ] 5;
+        4[label=right:"2,1"] -> [ "(5,0)" pos=0.2  ] 6;
+        5 -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,1"];
+        5 -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,4)" pos=0.2  ] 1[label=right:"7,1"];
+        2[label=right:"1,1"] -> [ "(1,1)" pos=0.2  ] 8;
+        3[label=right:"1,1"] -> [ "(1,1)" pos=0.2  ] 8;
+        4[label=right:"2,1"] -> [ "(1,1)" pos=0.2  ] 8;
+        5 -> [ "(1,1)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 4}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,1"] -> [ "(5,3)" pos=0.2  ] 2[label=right:"1,1"];
+        1[label=right:"7,1"] -> [ "(5,1)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"1,1"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"1,1"] -> [ "(5,1)" pos=0.2  ] 4[label=right:"2,1"];
+        2[label=right:"1,1"] -> [ "(5,1)" pos=0.2  ] 5[label=right:"2,1"];
+        3[label=right:"1,1"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,1"];
+        4[label=right:"2,1"] -> [ "(5,0)" pos=0.2  ] 6;
+        5[label=right:"2,1"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,1"];
+        5[label=right:"2,1"] -> [ "(5,0)" pos=0.2  ] 6;
+        7[label=right:"7,1000"] -> [ "(5,4)" pos=0.2  ] 1[label=right:"7,1"];
+        2[label=right:"1,1"] -> [ "(1,1)" pos=0.2  ] 8;
+        3[label=right:"1,1"] -> [ "(1,1)" pos=0.2  ] 8;
+        4[label=right:"2,1"] -> [ "(1,1)" pos=0.2  ] 8;
+        5[label=right:"2,1"] -> [ "(1,1)" pos=0.2  ] 8;
+        6 -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 5}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,1"] -> [ "(5,3)" pos=0.2  ] 2[label=right:"1,1"];
+        1[label=right:"7,1"] -> [ "(5,1)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"1,1"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"1,1"] -> [ "(5,1)" pos=0.2  ] 4[label=right:"2,1"];
+        2[label=right:"1,1"] -> [ "(5,1)" pos=0.2  ] 5[label=right:"2,1"];
+        3[label=right:"1,1"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,1"];
+        4[label=right:"2,1"] -> [ "(5,0)" pos=0.2  ] 6[label=right:"4,1"];
+        5[label=right:"2,1"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,1"];
+        5[label=right:"2,1"] -> [ "(5,0)" pos=0.2  ] 6[label=right:"4,1"];
+        7[label=right:"7,1000"] -> [ "(5,4)" pos=0.2  ] 1[label=right:"7,1"];
+        2[label=right:"1,1"] -> [ "(1,1)" pos=0.2  ] 8;
+        3[label=right:"1,1"] -> [ "(1,1)" pos=0.2  ] 8;
+        4[label=right:"2,1"] -> [ "(1,1)" pos=0.2  ] 8;
+        5[label=right:"2,1"] -> [ "(1,1)" pos=0.2  ] 8;
+        6[label=right:"4,1"] -> [ "(1,0)" pos=0.2  ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 6}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1[label=right:"7,1"] -> [ "(5,3)" pos=0.2  ] 2[label=right:"1,1"];
+        1[label=right:"7,1"] -> [ "(5,1)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"1,1"] -> [ "(5,0)" pos=0.2  ] 3[label=right:"1,1"];
+        2[label=right:"1,1"] -> [ "(5,1)" pos=0.2  ] 4[label=right:"2,1"];
+        2[label=right:"1,1"] -> [ "(5,1)" pos=0.2  ] 5[label=right:"2,1"];
+        3[label=right:"1,1"] -> [ "(5,0)" pos=0.2  ] 5[label=right:"2,1"];
+        4[label=right:"2,1"] -> [ "(5,0)" pos=0.2  ] 6[label=right:"4,1"];
+        5[label=right:"2,1"] -> [ "(5,0)" pos=0.2  ] 4[label=right:"2,1"];
+        5[label=right:"2,1"] -> [ "(5,0)" pos=0.2  ] 6[label=right:"4,1"];
+        7[label=right:"7,1000"] -> [ "(5,4)" pos=0.2  ] 1[label=right:"7,1"];
+        2[label=right:"1,1"] -> [ "(1,1)" pos=0.2  ] 8[label=right:"6,1"];
+        3[label=right:"1,1"] -> [ "(1,1)" pos=0.2  ] 8[label=right:"6,1"];
+        4[label=right:"2,1"] -> [ "(1,1)" pos=0.2  ] 8[label=right:"6,1"];
+        5[label=right:"2,1"] -> [ "(1,1)" pos=0.2  ] 8[label=right:"6,1"];
+        6[label=right:"4,1"] -> [ "(1,0)" pos=0.2  ] 8[label=right:"6,1"];
+        
+    }; %
+\end{tikzpicture}%
+\caption{Etichetto 8}%
+\end{subfigure}%
+\end{figure}
+
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(4)" pos=0.2 ,blue ] 2;
+        1 -> [ "(1)" pos=0.2  ] 3;
+        2 -> [ "(0)" pos=0.2  ] 3;
+        2 -> [ "(2)" pos=0.2 ,blue ] 4;
+        2 -> [ "(1)" pos=0.2  ] 5;
+        3 -> [ "(0)" pos=0.2  ] 5;
+        4 -> [ "(1)" pos=0.2 ,blue ] 6;
+        5 -> [ "(0)" pos=0.2  ] 4;
+        5 -> [ "(0)" pos=0.2  ] 6;
+        7 -> [ "(5)" pos=0.2 ,blue ] 1;
+        2 -> [ "(1)" pos=0.2  ] 8;
+        3 -> [ "(1)" pos=0.2  ] 8;
+        4 -> [ "(1)" pos=0.2  ] 8;
+        5 -> [ "(1)" pos=0.2  ] 8;
+        6 -> [ "(1)" pos=0.2 ,blue ] 8;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Aumento il flusso di 1 }%
+\end{subfigure}%
+\end{figure}
+
+%
+\newpage
+
+%
+\subsection{Iterazione 5}%
+\label{subsec:Iterazione5}%
+
+%
+\section{Ricerca di cicli di costo negativo}%
+\label{sec:Ricercadiciclidicostonegativo}%
+Inizio la ricerca di cicli di costo negativo
+
+%
+\subsection{Iterazione 0}%
+\label{subsec:Iterazione0}%
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(4)" pos=0.2  ] 2;
+        1 -> [ "(1)" pos=0.2  ] 3;
+        2 -> [ "(0)" pos=0.2  ] 3;
+        2 -> [ "(1)" pos=0.2  ] 4;
+        2 -> [ "(2)" pos=0.2  ] 5;
+        3 -> [ "(0)" pos=0.2  ] 5;
+        4 -> [ "(0)" pos=0.2  ] 6;
+        5 -> [ "(0)" pos=0.2  ] 4;
+        5 -> [ "(1)" pos=0.2  ] 6;
+        
+    }; %
+\end{tikzpicture}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(2,1)" pos=0.2 , bend left ] 2;
+        1 -> [ "(3,4)" pos=0.2 , bend left ] 3;
+        2 -> [ "(2,5)" pos=0.2  ] 3;
+        2 -> [ "(4,3)" pos=0.2 , bend left ] 4;
+        2 -> [ "(3,4)" pos=0.2 , bend left,blue ] 5;
+        3 -> [ "(4,5)" pos=0.2  ] 5;
+        4 -> [ "(3,4)" pos=0.2 , bend left ] 6;
+        5 -> [ "(1,5)" pos=0.2  ] 4;
+        5 -> [ "(2,5)" pos=0.2 ,blue ] 6;
+        2 -> [ "(-2,4)" pos=0.2 , bend left ] 1;
+        3 -> [ "(-3,1)" pos=0.2 , bend left ] 1;
+        4 -> [ "(-4,2)" pos=0.2 , bend left,blue ] 2;
+        5 -> [ "(-3,1)" pos=0.2 , bend left ] 2;
+        6 -> [ "(-3,1)" pos=0.2 , bend left,blue ] 4;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Trovato ciclo di costo negativo}%
+\end{subfigure}%
+\end{figure}
+
+%
+\newpage
+
+%
+\section{Ricerca di cicli di costo negativo}%
+\label{sec:Ricercadiciclidicostonegativo}%
+Inizio la ricerca di cicli di costo negativo
+
+%
+\subsection{Iterazione 1}%
+\label{subsec:Iterazione1}%
+%
+
+
+\begin{figure}[htbp]%
+\centering%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(4)" pos=0.2  ] 2;
+        1 -> [ "(1)" pos=0.2  ] 3;
+        2 -> [ "(0)" pos=0.2  ] 3;
+        2 -> [ "(1)" pos=0.2  ] 4;
+        2 -> [ "(2)" pos=0.2  ] 5;
+        3 -> [ "(0)" pos=0.2  ] 5;
+        4 -> [ "(0)" pos=0.2  ] 6;
+        5 -> [ "(0)" pos=0.2  ] 4;
+        5 -> [ "(1)" pos=0.2  ] 6;
+        
+    }; %
+\end{tikzpicture}%
+\end{subfigure}%
+\begin{subfigure}{0.45\linewidth}%
+\begin{tikzpicture}[scale=0.6,every node/.style={transform shape},every edge quotes/.style={font=\small},>={Stealth[width=2mm,length=2mm]}]%
+
+    \graph [
+        spring layout,
+        node distance=4cm,
+        nodes={draw, circle, swap, fill=cyan!60},
+        edge quotes={auto,sloped},
+    ] {
+    1 -> [ "(2,1)" pos=0.2 , bend left ] 2;
+        1 -> [ "(3,4)" pos=0.2 , bend left ] 3;
+        2 -> [ "(2,5)" pos=0.2  ] 3;
+        2 -> [ "(4,4)" pos=0.2 , bend left ] 4;
+        2 -> [ "(3,3)" pos=0.2 , bend left ] 5;
+        3 -> [ "(4,5)" pos=0.2  ] 5;
+        4 -> [ "(3,5)" pos=0.2  ] 6;
+        5 -> [ "(1,5)" pos=0.2  ] 4;
+        5 -> [ "(2,4)" pos=0.2 , bend left ] 6;
+        2 -> [ "(-2,4)" pos=0.2 , bend left ] 1;
+        3 -> [ "(-3,1)" pos=0.2 , bend left ] 1;
+        4 -> [ "(-4,1)" pos=0.2 , bend left ] 2;
+        5 -> [ "(-3,2)" pos=0.2 , bend left ] 2;
+        6 -> [ "(-2,1)" pos=0.2 , bend left ] 5;
+        
+    }; %
+\end{tikzpicture}%
+\caption{Non ci sono più cicli di costo negativo, flusso minimo trovato!}%
+\end{subfigure}%
+\end{figure}
+
+%
+\newpage
+
+%
+\end{document}
